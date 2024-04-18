@@ -4,11 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Tracker - Timer Display</title>
+    <script>
+        // Function to update elapsed time
+        function updateElapsedTime() {
+            // Get the element where elapsed time is displayed
+            var elapsedTimeElement = document.getElementById("elapsed_time");
+            // Get the current elapsed time in seconds
+            var elapsedTimeText = elapsedTimeElement.innerText.trim();
+            var elapsedTime = elapsedTimeText ? parseElapsedTime(elapsedTimeText) : 0;
+            // Increment elapsed time by 1 second
+            elapsedTime += 1;
+            // Update the elapsed time displayed on the page
+            elapsedTimeElement.innerText = formatElapsedTime(elapsedTime); // Format elapsed time
+        }
+
+        // Function to parse elapsed time from formatted string (e.g., "1h 2m 3s")
+        function parseElapsedTime(timeString) {
+            var parts = timeString.split(' ');
+            var hours = parseInt(parts[0]) || 0;
+            var minutes = parseInt(parts[1]) || 0;
+            var seconds = parseInt(parts[2]) || 0;
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        // Function to format elapsed time to days, hours, minutes, and seconds
+        function formatElapsedTime(seconds) {
+            var hours = Math.floor(seconds / 3600);
+            var minutes = Math.floor((seconds % 3600) / 60);
+            var remainingSeconds = Math.floor(seconds % 60);
+            
+            // Construct the formatted string
+            var formattedTime = '';
+            formattedTime += hours + 'h ';
+            formattedTime += minutes + 'm ';
+            formattedTime += remainingSeconds + 's';
+
+            return formattedTime;
+        }
+
+        // Function to start updating elapsed time every second
+        function startUpdatingElapsedTime() {
+            setInterval(updateElapsedTime, 1000); // Update every 1 second (1000 milliseconds)
+        }
+
+        // Call the startUpdatingElapsedTime function when the page loads
+        window.onload = startUpdatingElapsedTime;
+    </script>
 </head>
 <body>
     <h1>Timer Details</h1>
     <p>Project: {{ project }}</p>
     <p>Topic: {{ topic }}</p>
-    <p>Elapsed Time: {{ elapsed_time }}</p>
+    <!-- Display the elapsed time with an id for JavaScript to update -->
+    <p>Elapsed Time: <span id="elapsed_time">0s</span></p>
 </body>
 </html>
