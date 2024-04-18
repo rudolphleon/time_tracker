@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Tracker - Timer Display</title>
     <script>
-        // JavaScript object to store total elapsed time for each project
-        var totalTimeByProject = {};
+        // Function to start updating elapsed time every second
+        function startUpdatingElapsedTime() {
+            setInterval(updateElapsedTime, 1000);
+        }
 
         // Function to update elapsed time
         function updateElapsedTime() {
@@ -15,16 +17,6 @@
             var elapsedTime = elapsedTimeText ? parseElapsedTime(elapsedTimeText) : 0;
             elapsedTime += 1;
             elapsedTimeElement.innerText = formatElapsedTime(elapsedTime);
-
-            // Update total time for the current project
-            var project = "{{ project }}"; // Get current project name from template
-            if (project) {
-                if (!totalTimeByProject.hasOwnProperty(project)) {
-                    totalTimeByProject[project] = 0; // Initialize total time if not already present
-                }
-                totalTimeByProject[project] += 1; // Increment total time
-                updateTotalTimeDisplay(); // Update total time display
-            }
         }
 
         // Function to parse elapsed time from formatted string (e.g., "1h 2m 3s")
@@ -50,17 +42,6 @@
             return formattedTime;
         }
 
-        // Function to update total time display
-        function updateTotalTimeDisplay() {
-            var totalElement = document.getElementById("total_time");
-            totalElement.innerText = formatElapsedTime(totalTimeByProject["{{ project }}"]); // Update total time for current project
-        }
-
-        // Function to start updating elapsed time every second
-        function startUpdatingElapsedTime() {
-            setInterval(updateElapsedTime, 1000);
-        }
-
         // Call the startUpdatingElapsedTime function when the page loads
         window.onload = startUpdatingElapsedTime;
     </script>
@@ -70,6 +51,6 @@
     <p>Project: {{ project }}</p>
     <p>Topic: {{ topic }}</p>
     <p>Elapsed Time: <span id="elapsed_time">0s</span></p>
-    <p>Total Time: <span id="total_time">0s</span></p>
+    <p>Total Time: <span id="total_time">{{ total_time }}</span></p>
 </body>
 </html>
