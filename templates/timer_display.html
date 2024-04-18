@@ -5,17 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Tracker - Timer Display</title>
     <script>
+        // JavaScript object to store total elapsed time for each project
+        var totalTimeByProject = {};
+
         // Function to update elapsed time
         function updateElapsedTime() {
-            // Get the element where elapsed time is displayed
             var elapsedTimeElement = document.getElementById("elapsed_time");
-            // Get the current elapsed time in seconds
             var elapsedTimeText = elapsedTimeElement.innerText.trim();
             var elapsedTime = elapsedTimeText ? parseElapsedTime(elapsedTimeText) : 0;
-            // Increment elapsed time by 1 second
             elapsedTime += 1;
-            // Update the elapsed time displayed on the page
-            elapsedTimeElement.innerText = formatElapsedTime(elapsedTime); // Format elapsed time
+            elapsedTimeElement.innerText = formatElapsedTime(elapsedTime);
+
+            // Update total time for the current project
+            var project = "{{ project }}"; // Get current project name from template
+            if (project) {
+                if (!totalTimeByProject.hasOwnProperty(project)) {
+                    totalTimeByProject[project] = 0; // Initialize total time if not already present
+                }
+                totalTimeByProject[project] += 1; // Increment total time
+                updateTotalTimeDisplay(); // Update total time display
+            }
         }
 
         // Function to parse elapsed time from formatted string (e.g., "1h 2m 3s")
@@ -33,7 +42,6 @@
             var minutes = Math.floor((seconds % 3600) / 60);
             var remainingSeconds = Math.floor(seconds % 60);
             
-            // Construct the formatted string
             var formattedTime = '';
             formattedTime += hours + 'h ';
             formattedTime += minutes + 'm ';
@@ -42,9 +50,15 @@
             return formattedTime;
         }
 
+        // Function to update total time display
+        function updateTotalTimeDisplay() {
+            var totalElement = document.getElementById("total_time");
+            totalElement.innerText = formatElapsedTime(totalTimeByProject["{{ project }}"]); // Update total time for current project
+        }
+
         // Function to start updating elapsed time every second
         function startUpdatingElapsedTime() {
-            setInterval(updateElapsedTime, 1000); // Update every 1 second (1000 milliseconds)
+            setInterval(updateElapsedTime, 1000);
         }
 
         // Call the startUpdatingElapsedTime function when the page loads
@@ -55,7 +69,7 @@
     <h1>Timer Details</h1>
     <p>Project: {{ project }}</p>
     <p>Topic: {{ topic }}</p>
-    <!-- Display the elapsed time with an id for JavaScript to update -->
     <p>Elapsed Time: <span id="elapsed_time">0s</span></p>
+    <p>Total Time: <span id="total_time">0s</span></p>
 </body>
 </html>
